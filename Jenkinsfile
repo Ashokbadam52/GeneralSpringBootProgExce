@@ -2,13 +2,13 @@ pipeline {
   agent any
 
   environment {
-    SONAR_TOKEN = credentials('sonar')  // 🔐 Fetch securely
+    SONAR_TOKEN = credentials('sonar-token')  // 🔐 Fetch securely
   }
 
   stages {
     stage('Build') {
       steps {
-        git branch: 'development', url: 'https://github.com/aamirpatel/GeneralSpringBootProgExce.git'
+        git branch: 'development', url: 'https://github.com/Ashokbadam52/GeneralSpringBootProgExce.git'
         sh 'mvn clean package'
       }
     }
