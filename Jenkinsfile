@@ -1,19 +1,32 @@
 pipeline {
-    agent any
+  agent any
 
-    stages {
-        stage('Build') {
-            steps {
-                git branch: 'development', url: 'https://github.com/aamirpatel/GeneralSpringBootProgExce.git'
-                sh 'mvn clean install sonar:sonar -Dsonar.password=admin123 -Dsonar.login=admin'
-            }
-        }
-        
-         stage('Test') {
-            steps {
-               echo "Test"
-             
-            }
-        }
+  environment {
+    SONAR_TOKEN = credentials('sonar')  // 🔐 Fetch securely
+  }
+
+  stages {
+    stage('Build') {
+      steps {
+        git branch: 'main', url: 'https://github.com/aamirpatel/GeneralSpringBootProgExce.git'
+        sh 'mvn clean package'
+      }
     }
+
+    stage('SonarQube Analysis') {
+      steps {
+        withSonarQubeEnv('SonarScanner') {  // 🔍 Must match name set in Jenkins config
+          sh 'mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN'
+        }
+      }
+    }
+
+    stage('Quality Gate') {
+      steps {
+        timeout(time: 2, unit: 'MINUTES') {
+          waitForQualityGate abortPipeline: true
+        }
+      }
+    }
+  }
 }
