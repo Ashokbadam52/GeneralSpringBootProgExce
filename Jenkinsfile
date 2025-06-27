@@ -15,7 +15,7 @@ pipeline {
 
     stage('SonarQube Analysis') {
       steps {
-        withSonarQubeEnv('SonarScanner') {  // 🔍 Must match name set in Jenkins config
+        withSonarQubeEnv('sonar') {  // 🔍 Must match name set in Jenkins config
           sh 'mvn sonar:sonar -Dsonar.login=$SONAR_TOKEN'
         }
       }
